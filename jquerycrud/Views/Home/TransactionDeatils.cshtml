@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "TransactionDeatils";
+}
+
+<h2>TransactionList</h2>
+<section>
+<div class="group">
+    <div class="row">
+        <input type="button" value="Add Employee" style="float:right;" class="btn btn-primary" onclick="Add();" />
+
+    </div>
+</div>
+</section>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<section>
+    <table id="tblTransactions" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>CrusherDcNumber</th>
+                <th>GrossWeight </th>
+                <th>Quantity</th>
+
+            </tr>
+        </thead>
+    </table>
+
+</section>
+<script>
+    var URL = "http://localhost:43973/";
+    GetAll();
+    function GetAll() {
+        $.ajax({
+            type: 'GET',
+            url: URL + "api/Transactions/GetAll",
+            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            xhrFields: {
+                withCredentials: false
+            },
+            success: function (json) {
+                Console.log(json);
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + json[i].Pk + "</td>");
+                    tr.append("<td>" + json[i].CrusherDcNumber + "</td>");
+                    tr.append("<td>" + json[i].GrossWeight + "</td>");
+                    tr.append("<td>" + json[i].Quantity + "</td>");
+
+                    //tr.append("<td><input type='button' value='Delete' class='btn btn-primary' onclick='Delete(" + json[i].Id + ")'/></td>");
+                    //tr.append("<td><input type='button' value='Edit' class='btn btn-success' onclick='Edit(" + json[i].Id + ")'/></td>");
+                    $('#tblTransactions').append(tr);
+                }
+            },
+            error: function (err) {
+                alert("error");
+            }
+        });
+    }
+</script>

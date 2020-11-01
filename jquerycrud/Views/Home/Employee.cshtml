@@ -1,0 +1,138 @@
+﻿@{
+    ViewBag.Title = "Employee";
+}
+
+<h2>Employee</h2>
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<div>
+    <label id="lblmessage"></label>
+</div>
+<section>
+    <table>
+        <tr>
+            <td>
+                Employee
+            </td>
+           
+            <td>
+                <input type="text" id="txtname" class="form-control" />
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Mobile
+            </td>
+            <td>
+                <input type="text" id="txtmobile" class="form-control" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Salary
+            </td>
+            <td>
+                <input type="text" id="txtsalary" class="form-control" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="button" id="btnsave" value="Save" onclick="Save();" />
+                <input type="button" id="btnupdate" value="Update" onclick="Update();" />
+                <input type="hidden" id="txtid" />
+            </td>
+        </tr>
+    </table>
+</section>
+<script>
+    var URL = "http://localhost:43973/";
+
+    var Id = localStorage.getItem("Id");
+    $("#btnsave").hide();
+    $("#btnupdate").hide();
+    window.onload = function () {
+
+        if (Id == null) {
+           //alert("save");
+               $("#btnsave").show();
+            $("#btnupdate").hide();
+        }
+        else {
+            GetById(Id);
+            //alert("Update");
+
+            $("#btnsave").show();
+            $("#btnupdate").show();
+        }
+    }
+
+    function GetById(Id) {
+        $.ajax({
+            type: 'GET',
+            url: URL + "api/Employee/GetById",
+            data: { "Id": Id },
+            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            xhrFields: {
+                withCredentials: false
+            },
+            success: function (json) {
+                console.log(json);
+                $("#txtname").val(json[0].Name);
+                $("#txtmobile").val(json[0].Mobile);
+                $("#txtsalary").val(json[0].Salary);
+                $("#txtid").val(json[0].Id);
+
+            }
+        })
+    }
+    function Save() {
+        if ($("#txtname").val() != "" && $("#txtmobile").val() != "" && $("#txtsalary").val() != "") {
+            $.ajax({
+                type: 'GET',
+                url: URL + "api/Employee/insert",
+                data: { "Name": $("#txtname").val(), "Mobile": $("#txtmobile").val(), "Salary": $("#txtsalary").val() },
+                contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                xhrFields: {
+                    withCredentials: false
+                },
+                success: function (json) {
+                    window.location.href = "/Home/EmployeeList";
+                }
+            })
+        }
+        else
+            if ($("#txtname").val() == "") {
+                $("#lblmessage").text("Please enter name");
+                $("#lblmessage").css("color","red");
+
+            }
+            else if ($("#txtmobile").val() == "") {
+                $("#lblmessage").text("Please enter mobile");
+                $("#lblmessage").css("color", "red");
+
+            }
+            else if ($("#txtsalary").val() == "") {
+                $("#lblmessage").text("Please enter salary");
+                $("#lblmessage").css("color", "red");
+
+            }
+
+    }
+    function Update() {
+        //alert("okk");
+        $.ajax({
+            type: 'GET',
+            url: URL + "api/Employee/Update",
+            data: { "Name": $("#txtname").val(), "Mobile": $("#txtmobile").val(), "Salary": $("#txtsalary").val(), "Id": $("#txtid").val() },
+            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            xhrFields: {
+                withCredentials: false
+            },
+            success: function (json) {
+                window.location.href = "/Home/EmployeeList";
+            }
+        })
+    }
+
+</script>

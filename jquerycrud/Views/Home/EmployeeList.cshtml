@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "EmployeeList";
+}
+<h3>EmployeeList</h3>
+<section>
+    <div class="group">
+        <div class="row">
+            <input type="button" value="Add Employee" style="float:right;" class="btn btn-primary" onclick="Add();" />
+
+        </div>
+    </div>
+</section>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<section>
+    <table id="tblCategory" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Mobile </th>
+                <th>Salary</th>
+                <th>Delete</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+    </table>
+
+</section>
+<script>
+    var URL = "http://localhost:43973/";
+    GetAll();
+    function GetAll() {
+        $.ajax({
+            type: 'GET',
+            url: URL + "api/Employee/GetAll",
+            contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+            xhrFields: {
+                withCredentials: false
+            },
+            success: function (json) {
+
+                for (var i = 0; i < json.length; i++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + json[i].Name + "</td>");
+                    tr.append("<td>" + json[i].Mobile + "</td>");
+                    tr.append("<td>" + json[i].Salary + "</td>");
+                    tr.append("<td><input type='button' value='Delete' class='btn btn-primary' onclick='Delete(" + json[i].Id + ")'/></td>");
+                    tr.append("<td><input type='button' value='Edit' class='btn btn-success' onclick='Edit(" + json[i].Id + ")'/></td>");
+                    $('#tblCategory').append(tr);
+                }
+            },
+            error: function (err) {
+                alert("error");
+            }
+        });
+    }
+    function Delete(Id) {
+        if (confirm("are u sure to delete this record") == true);
+        {
+            $.ajax({
+                type: 'GET',
+                url: URL + "api/Employee/Delete",
+                data: { "Id": Id },
+                contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+                xhrFields: {
+                    withCredentials: false
+                },
+                success: function () {
+                    location.reload();
+                }
+            });
+        }
+    }
+    function Edit(Id)
+    {
+        localStorage.setItem("Id", Id);
+        window.location.href = "/Home/Employee";
+    }
+    function Add(Id) {
+        localStorage.setItem("Id", null);
+        window.location.href = "/Home/Employee";
+    }
+</script>
